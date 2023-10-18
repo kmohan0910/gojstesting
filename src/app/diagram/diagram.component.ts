@@ -1,53 +1,25 @@
-import {
-  CompactType,
-  DisplayGrid,
-  GridsterConfig,
-  GridsterItem,
-  GridType,
-} from 'angular-gridster2';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import * as go from 'gojs';
+
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  selector: 'app-diagram',
+  templateUrl: './diagram.component.html',
+  styleUrls: ['./diagram.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class DiagramComponent implements OnInit, AfterViewInit {
   title = 'gojstesting';
   diagram!: go.Diagram;
-  obj = {
-    id: 'c',
-    width: '1700',
-    height: '800',
-    x: 100,
-    y: 0,
-    zindex: 10,
-    diagram: '',
-    nodeDataArray: [],
-    linkDataArray: [],
-  };
+  @Input() diagramID;
+  constructor() {}
 
-  ngOnInit() {
-    this.dashboard = [
-      { cols: 5, rows: 5, y: 0, x: 0, index: 'diagram2' },
-      { cols: 5, rows: 5, y: 2, x: 2, index: 'diagram1' },
-    ];
-    this.initOptions();
-    // this.initScada();
-  }
-  addCanvas() {
-    this.dashboard.push({
-      cols: 5,
-      rows: 5,
-      y: 0,
-      x: 0,
-      index: 'diagram' + this.dashboard.length + 1,
-    });
+  ngOnInit() {}
+  ngAfterViewInit(): void {
+    this.initScada();
   }
   initScada() {
-    console.log('here');
+    console.log('here', this.diagramID);
     const $ = go.GraphObject.make;
-    this.diagram = $(go.Diagram, 'myDiagram', {
+    this.diagram = $(go.Diagram, this.diagramID, {
       maxSelectionCount: 1, // users can select only one part at a time
       'draggingTool.isEnabled': true,
       allowVerticalScroll: false,
@@ -59,8 +31,6 @@ export class AppComponent implements OnInit {
       // ChangedSelection: onSelectionChanged,
       // selectionMoved: onSelectionChanged,
       // layout:
-      //   $(go.TreeLayout,
-      //     { angle: 90, arrangement: go.TreeLayout.ArrangementFixedRoots }),
     });
     this.diagram.nodeTemplateMap.add(
       'Device',
@@ -178,109 +148,4 @@ export class AppComponent implements OnInit {
     );
     this.diagram.toolManager.linkingTool.isEnabled = true;
   }
-  addNode() {
-    var node = new go.Node('Auto');
-    var shape = new go.Shape();
-    shape.figure = 'RoundedRectangle';
-    shape.fill = 'lightblue';
-    shape.strokeWidth = 3;
-    node.add(shape);
-    var textblock = new go.TextBlock();
-    textblock.text = 'Hello!';
-    textblock.margin = 5;
-    node.add(textblock);
-    this.diagram.add(node);
-    //   const $ = go.GraphObject.make;
-    //   $(go.Node. 'Auto',  { locationSpot: go.Spot.Center },$(go.Shape, "Rectangle",{
-    //     fill: "rgba(128,128,128,0.2)", stroke: "gray", strokeWidth: 3,
-    //     portId: "", cursor: "pointer",  // the Shape is the port, not the whole Node
-    //     // allow all kinds of links from and to this port
-    //     fromLinkable: true, fromLinkableSelfNode: true, fromLinkableDuplicates: true,
-    //     toLinkable: true, toLinkableSelfNode: true, toLinkableDuplicates: true
-
-    //   }
-    //   $(go.TextBlock,
-    //      {
-
-    //   })))
-    // }
-  }
-  initOptions() {
-    this.options = {
-      gridType: GridType.Fixed,
-      compactType: CompactType.None,
-      margin: 10,
-      outerMargin: true,
-      outerMarginTop: null,
-      outerMarginRight: null,
-      outerMarginBottom: null,
-      outerMarginLeft: null,
-      useTransformPositioning: true,
-      mobileBreakpoint: 640,
-      minCols: 12,
-      maxCols: 12,
-      minRows: 5,
-      maxRows: 12,
-      maxItemCols: 12,
-      minItemCols: 1,
-      minItemRows: 1,
-      maxItemArea: 2500,
-      minItemArea: 1,
-      defaultItemCols: 1,
-      defaultItemRows: 1,
-      fixedColWidth: (screen.width - 250) / 12,
-      fixedRowHeight: 100,
-      keepFixedHeightInMobile: false,
-      keepFixedWidthInMobile: true,
-      scrollSensitivity: 10,
-      scrollSpeed: 20,
-      enableEmptyCellClick: false,
-      enableEmptyCellContextMenu: false,
-      enableEmptyCellDrop: false,
-      enableEmptyCellDrag: false,
-      enableOccupiedCellDrop: false,
-      emptyCellDragMaxCols: 50,
-      emptyCellDragMaxRows: 50,
-      ignoreMarginInRow: false,
-      draggable: {
-        enabled: true,
-        dragHandleClass: 'handle',
-        ignoreContent: true,
-      },
-      resizable: {
-        enabled: true,
-      },
-      swap: true,
-      pushItems: true,
-      disablePushOnDrag: false,
-      disablePushOnResize: false,
-      pushDirections: {
-        north: true,
-        east: true,
-        south: true,
-        west: true,
-      },
-      pushResizeItems: false,
-      displayGrid: DisplayGrid.OnDragAndResize,
-      disableWindowResize: false,
-      disableWarnings: false,
-      scrollToNewItems: false,
-      defaultLayerIndex: 1,
-      setGridSize: true,
-    };
-  }
-  options: GridsterConfig;
-  dashboard: Array<GridsterItem>;
-
-  changedOptions() {
-    this.options.api.optionsChanged();
-  }
-
-  removeItem(item) {
-    this.dashboard.splice(this.dashboard.indexOf(item), 1);
-  }
-
-  // addItem() {
-  //   this.dashboard.push({});
-  // }
 }
